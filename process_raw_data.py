@@ -11,6 +11,15 @@ type_conversion_dict = {
     'Rating': float
 }
 
+column_rename_dict = {
+    'Year released': 'year_released' ,
+    'ratings': 'ratings_count',
+    'Rating': 'rating',
+    'name': 'author_name' 
+}
+
+column_order = ['book_title', 'author_name', 'year_released', 'rating', 'ratings_count']
+
 def read_raw_data_csvs() -> list[pd.DataFrame]:
     """Reads data from RAW_DATA csv files and returns a list of
      DataFrames for each CSV """
@@ -65,6 +74,13 @@ def export_to_csv(final_df:pd.DataFrame, filename) -> pd.DataFrame:
     """Exports the file to csv"""
     final_df.to_csv(filename, index=False)
 
+def aesthetic_changes(ugly_df:pd.DataFrame) -> pd.DataFrame:
+    """Improves the look of the columns by changing the names to a uniform style,
+    and reordering the columns into a more coherent order."""
+    ugly_df = ugly_df.rename(columns=column_rename_dict)
+    return ugly_df[column_order]
+
+
 
 if __name__ == "__main__":
     raw_book_tables = read_raw_data_csvs()
@@ -75,4 +91,5 @@ if __name__ == "__main__":
     conformed_df = conform_data_to_style(merged_df)
     uniform_df = convert_columns_to_single_data_type(conformed_df)
     sorted_df = sort_data(uniform_df)
-    export_to_csv(sorted_df, 'PROCESSED_DATA.csv')
+    pretty_df = aesthetic_changes(sorted_df)
+    export_to_csv(pretty_df, 'PROCESSED_DATA.csv')
