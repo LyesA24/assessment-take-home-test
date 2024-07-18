@@ -1,7 +1,9 @@
-"""A script to process book data."""
+"""Transform script reads raw csv data and outputs PROCESSED_DATA.csv"""
 import os
+import argparse
 import pandas as pd
 
+DEFAULT_FILENAME = 'PROCESSED_DATA.csv'
 
 type_conversion_dict = {
     'book_title': str,
@@ -19,6 +21,23 @@ column_rename_dict = {
 }
 
 column_order = ['book_title', 'author_name', 'year_released', 'rating', 'ratings_count']
+
+def get_parser_arguments()-> str:
+    """Adds command line functionality for the output file path."""
+    parser = argparse.ArgumentParser(description="""Transform raw books data and author data,
+                                     and output processed_data.csv .""")
+    parser.add_argument('--path', nargs='?', type=str, default=DEFAULT_FILENAME,
+                        help="Choose a file path, default is 'PROCESSED_DATA.csv'")
+    args = parser.parse_args()
+    path =args.path
+    # Validation for empty string input:
+    if not path:
+        raise ValueError("""'--path' present but no string input.
+                        --path argument must be in format '--path filename.csv'""")
+    # Validation check for singular .csv in string:
+    if path.count('.csv') == 1:
+        return path
+    raise ValueError("""--path must be in format '--path filename.csv'.""")
 
 def read_raw_data_csvs() -> list[pd.DataFrame]:
     """Reads data from RAW_DATA csv files and returns a list of
@@ -53,8 +72,10 @@ def left_merge_author_book_data(authors:pd.DataFrame, clean_book_df:pd.DataFrame
     return df
 
 def conform_data_to_style(unconformed_df:pd.DataFrame) -> pd.DataFrame:
-    """Conforms data to remove unwanted characters
-    or information in brackets."""
+    """
+    Conforms data to remove unwanted characters
+    or information in brackets.
+    """
     unconformed_df['book_title'] = (unconformed_df['book_title'].str.replace
                                     (r'\s*\([^)]*\)', '', regex=True))
     unconformed_df['Rating'] = unconformed_df['Rating'].str.replace(',', '.')
@@ -70,19 +91,22 @@ def sort_data(unsorted_df:pd.DataFrame) -> pd.DataFrame:
     """Orders book rows by rating value"""
     return unsorted_df.sort_values(by='Rating', ascending=False)
 
-def export_to_csv(final_df:pd.DataFrame, filename) -> pd.DataFrame:
+def export_to_csv(final_df:pd.DataFrame, filepath) -> pd.DataFrame:
     """Exports the file to csv"""
-    final_df.to_csv(filename, index=False)
+    final_df.to_csv(filepath, index=False)
 
 def aesthetic_changes(ugly_df:pd.DataFrame) -> pd.DataFrame:
-    """Improves the look of the columns by changing the names to a uniform style,
-    and reordering the columns into a more coherent order."""
+    """
+    Improves the look of the columns by changing the names to a uniform style,
+    and reordering the columns into a more coherent order.
+    """
     ugly_df = ugly_df.rename(columns=column_rename_dict)
     return ugly_df[column_order]
 
 
 
 if __name__ == "__main__":
+    filename = get_parser_arguments()
     raw_book_tables = read_raw_data_csvs()
     author_table = read_authors_csv()
     concatenated_book_df = merge_book_dfs(raw_book_tables)
@@ -92,4 +116,4 @@ if __name__ == "__main__":
     uniform_df = convert_columns_to_single_data_type(conformed_df)
     sorted_df = sort_data(uniform_df)
     pretty_df = aesthetic_changes(sorted_df)
-    export_to_csv(pretty_df, 'PROCESSED_DATA.csv')
+    export_to_csv(pretty_df, filename)
