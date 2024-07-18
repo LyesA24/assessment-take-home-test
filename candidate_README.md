@@ -20,6 +20,8 @@ I changed the column names in EXAMPLE_DATA_4.csv to my preferred names but every
 
 For test_example_data_4_titles and test_example_data_4_names I am aware tests should only test functions instead of most of the script, however I wanted to verify my script manipulates the data properly.
 
+Run the tests using 'pytest test_analyse_processed_data.py' and 'pytest test_process_raw_data.py'
+
 
 ## Notes
 Given more time I would have been able to sort out the clipping between one of the labels
