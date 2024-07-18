@@ -3,6 +3,7 @@ All of the additional libraries I used have been added to the requirements.txt.
 
 ## Task 1
 To run process_raw_data.py with command line argument. 'python3.12 process_raw_data.py --path '*filename.csv*'
+The output columns have been slightly renamed to preferred names.
 The string columns are objects which is the pandas datatype for text. Although I tried to change these specifically to str pandas kept these as objects.
 
 
@@ -13,6 +14,11 @@ The produced images will be included in the repo however running the code should
 the exact same .png images.
 
 The program can be run normally and requires no inputs.
+
+## Testing
+I changed the column names in EXAMPLE_DATA_4.csv to my preferred names but everything else is unchanged.
+
+For test_example_data_4_titles and test_example_data_4_names I am aware tests should only test functions instead of most of the script, however I wanted to verify my script manipulates the data properly.
 
 
 ## Notes
