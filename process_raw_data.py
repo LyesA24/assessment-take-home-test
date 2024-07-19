@@ -59,11 +59,11 @@ def merge_book_dfs(book_df_list: list[pd.DataFrame]) -> pd.DataFrame:
     """Combines the separate book DataFrame tables."""
     return pd.concat(book_df_list, ignore_index=True)
 
-def clean_book_df(raw_book_df: pd.DataFrame) -> pd.DataFrame:
+def clean_book_data(raw_book_df: pd.DataFrame) -> pd.DataFrame:
     """Drops unused columns and rows containing na values from DataFrame"""
-    raw_book_df = raw_book_df.drop(columns=['index', 'Unnamed: 0', 'Unnamed: 0.1'])
-    raw_book_df = raw_book_df.dropna()
-    return raw_book_df
+    df = raw_book_df.drop(columns=['index', 'Unnamed: 0', 'Unnamed: 0.1'])
+    df = df.dropna()
+    return df
 
 def left_merge_author_book_data(authors: pd.DataFrame, clean_book_df:pd.DataFrame) -> pd.DataFrame:
     """Left joins book data table to authors data table."""
@@ -103,17 +103,20 @@ def aesthetic_changes(ugly_df: pd.DataFrame) -> pd.DataFrame:
     ugly_df = ugly_df.rename(columns=column_rename_dict)
     return ugly_df[column_order]
 
-
-
-if __name__ == "__main__":
+def main():
+    """Executes all the functions."""
     filename = get_parser_arguments()
     raw_book_tables = read_raw_data_csvs()
     author_table = read_authors_csv()
     concatenated_book_table = merge_book_dfs(raw_book_tables)
-    clean_book_table = clean_book_df(concatenated_book_table)
+    clean_book_table = clean_book_data(concatenated_book_table)
     merged_table = left_merge_author_book_data(author_table, clean_book_table)
     conformed_table = conform_data_to_style(merged_table)
     uniform_table = convert_columns_to_single_data_type(conformed_table)
     sorted_table = sort_data(uniform_table)
     pretty_table = aesthetic_changes(sorted_table)
     export_to_csv(pretty_table, filename)
+
+
+if __name__ == "__main__":
+    main()

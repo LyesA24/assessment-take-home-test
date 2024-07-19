@@ -1,12 +1,12 @@
 import pytest
 import pandas as pd
-from process_raw_data import read_authors_csv, clean_book_df, left_merge_author_book_data, conform_data_to_style, convert_columns_to_single_data_type, sort_data, aesthetic_changes
+from process_raw_data import read_authors_csv, clean_book_data, left_merge_author_book_data, conform_data_to_style, convert_columns_to_single_data_type, sort_data, aesthetic_changes
 
 
 def test_example_data_4_titles():
     raw_book_tables = pd.read_csv('./data/RAW_DATA_4.csv')
     author_table = read_authors_csv()
-    clean_book_table = clean_book_df(raw_book_tables)
+    clean_book_table = clean_book_data(raw_book_tables)
     merged_df = left_merge_author_book_data(author_table, clean_book_table)
     conformed_df = conform_data_to_style(merged_df)
     uniform_df = convert_columns_to_single_data_type(conformed_df)
@@ -18,7 +18,7 @@ def test_example_data_4_titles():
 def test_example_data_4_names():
     raw_book_tables = pd.read_csv('./data/RAW_DATA_4.csv')
     author_table = read_authors_csv()
-    clean_book_table = clean_book_df(raw_book_tables)
+    clean_book_table = clean_book_data(raw_book_tables)
     merged_df = left_merge_author_book_data(author_table, clean_book_table)
     conformed_df = conform_data_to_style(merged_df)
     uniform_df = convert_columns_to_single_data_type(conformed_df)
@@ -41,12 +41,12 @@ def sample_raw_df():
     })
 
 def test_clean_book_df_columns(sample_raw_df):
-    clean_df = clean_book_df(sample_raw_df)
+    clean_df = clean_book_data(sample_raw_df)
     expected_columns = ['book_title', 'Year released', 'ratings', 'Rating', 'author_id']
     assert list(clean_df.columns) == expected_columns
 
 def test_clean_book_df_drop_rows_with_na(sample_raw_df):
-    clean_df = clean_book_df(sample_raw_df)
+    clean_df = clean_book_data(sample_raw_df)
     assert clean_df.shape[0] == 1 
 
 @pytest.fixture
